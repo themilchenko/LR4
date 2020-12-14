@@ -1,109 +1,138 @@
-﻿#include <iostream>
 #include <ctime>
+#include <iostream>
 #include <vector>
 
-void vecprint(std::vector <int>& a) // printing of our array
+void print_vec(std::vector <int>& a)
 {
     for (int v : a)
         std::cout << v << " ";
     std::cout << std::endl;
 }
 
-void swap(int& a, int& b) // change places of two elements of array
+void swap(int& a, int& b)
 {
     int t = a;
     a = b;
     b = t;
 }
 
-void bubblesort(std::vector <int>& a)
+void bubble_sort(std::vector <int>& a)
 {
-    std::cout << "Bubble sort array: ";
     for (int i = 0; i < a.size(); i++)
         for (int j = 0; j < a.size() - i - 1; j++)
             if (a[j] > a[j + 1])
                 swap(a[j], a[j + 1]);
-    vecprint(a);
 }
 
-void insertionsort(std::vector <int>& a)
+void insertion_sort(std::vector <int>& a)
 {
-    std::cout << "Insertion sort array: ";
-    for (int i = 1; i < a.size(); i++)
-        for (int j = i; ((j > 0) && (a[j - 1] > a[j])); j--)
-            swap(a[j], a[j + 1]);
-    vecprint(a);
-}
-
-void merge(std::vector<int>& a, int left, int middle, int right)
-{
-    int i, j, k, nl, nr;
-    nl = middle - left + 1;
-    nr = right - middle;
-    std::vector<int> larr(nl);
-    std::vector<int> rarr(nr);
-    for (i = 0; i < nl; i++)
-        larr[i] = a[left + i];
-    for (j = 0; j < nr; j++)
-        rarr[i] = a[middle + 1 + j];
-    i = 0; j = 0; k = left;
-    while ((i < nl) && (j < nr))
+    int j;
+    for (int i = 0; i < a.size() - 1; i++)
     {
-        if (larr[i] <= rarr[j])
+        j = i + 1;
+        if (a[i] > a[j])
         {
-            a[k] = larr[i];
-            i++;
+            while (j != a.size())
+            {
+                if (a[i] > a[j])
+                {
+                    swap(a[i], a[j]);
+                    break;
+                }
+                j++;
+            }
+            while (j != 0)
+            {
+                if (a[j] < a[j - 1])
+                    swap(a[j], a[j - 1]);
+                j--;
+            }
+        }
+    }
+}
+
+void merge (std::vector<int>& vec, std::vector<int>& vec1, std::vector<int>& vec2)
+{
+    int min1 = 0;
+    int min2 = 0;
+    int min = 0;
+
+    while ((min1 < vec1.size()) && (min2 < vec2.size())) 
+    {
+        if (vec1[min1] < vec2[min2])
+        {
+            vec[min] = vec1[min1];
+            min1++;
         }
         else
         {
-            a[k] = rarr[j];
-            j++;
+            vec[min] = vec2[min2];
+            min2++;
         }
-        k++;
+        min++;
     }
-    while (i < nl)
+
+    while (min1 < vec1.size())
     {
-        a[k] = larr[i];
-        i++;
-        k++;
+        vec[min] = vec1[min1];
+        min1++;
+        min++;
     }
-    while (j < nr)
+
+    while (min2 < vec2.size())
     {
-        a[k] = rarr[j];
-        j++;
-        k++;
+        vec[min] = vec2[min2];
+        min2++;
+        min++;
     }
 }
 
-void mergesort(std::vector <int>& a, int left, int right)
+void merge_sort(std::vector<int>& a)
 {
-    int middle;
-    if (left < right)
-    {
-        middle = left + (right - left) / 2;
-        mergesort(a, left, middle);
-        mergesort(a, middle + 1, right);
-        merge(a, left, middle, right);
-    }
-    vecprint(a);
+    if (a.size() < 2)
+        return;
+    int middle = a.size() / 2;
+    std::vector<int> left(middle);
+    std::vector<int> right(a.size() - middle);
+
+    for (int i = 0; i < middle; i++)
+        left[i] = a[i];
+
+    for (int i = middle; i < a.size(); i++)
+        right[i - middle] = a[i];
+
+    merge_sort(left);
+    merge_sort(right);
+    merge(a, left, right);
 }
 
 int main()
 {
-    int n;
-    std::cout << "Number digits in array: ";
-    std::cin >> n;
+    int size;
+    std::cout << "Enter the size of vector: ";
+    std::cin >> size;
+
     std::srand(std::time(nullptr));
-    std::cout << "Random digits before sorting: ";
-    std::vector <int> a(n);
-    for (int i = 0; i < n; i++)
+
+    std::vector<int> array(size);
+    std::cout << "Not sorted array: ";
+    for (int i = 0; i < array.size(); i++)
     {
-        a[i] = std::rand() % 201 - 100;
-        std::cout << a[i] << " ";
+        array[i] = std::rand() % 201 - 100;
+        std::cout << array[i] << " ";
     }
-    std::cout << std::endl;
-    bubblesort(a);
-    insertionsort(a);
-    mergesort(a, 0, n - 1);
+
+    std::cout << std::endl << std::endl << "Merge sort: ";
+    merge_sort(array);
+    print_vec(array);
+
+    std::cout << std::endl << "Bubble sort: ";
+    bubble_sort(array);
+    print_vec(array);
+
+    std::cout << std::endl << "Insertion sort: ";
+    insertion_sort(array);
+    print_vec(array);
+
     return 0;
 }
