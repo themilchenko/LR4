@@ -26,39 +26,20 @@ void bubble_sort(std::vector <int>& a)
 
 void insertion_sort(std::vector <int>& a)
 {
-    int j;
     for (int i = 0; i < a.size() - 1; i++)
-    {
-        j = i + 1;
-        if (a[i] > a[j])
-        {
-            while (j != a.size())
-            {
-                if (a[i] > a[j])
-                {
-                    swap(a[i], a[j]);
-                    break;
-                }
-                j++;
-            }
-            while (j != 0)
-            {
-                if (a[j] < a[j - 1])
-                    swap(a[j], a[j - 1]);
-                j--;
-            }
-        }
-    }
+        for (int j = i; j >= 0; j--)
+            if (a[j + 1] < a[j])
+                swap(a[j + 1], a[j]);
 }
 
-void merge (std::vector<int>& vec, std::vector<int>& vec1, std::vector<int>& vec2)
+void merge(std::vector<int>& vec, std::vector<int>& vec1, std::vector<int>& vec2)
 {
-    int min1 = 0;
-    int min2 = 0;
-    int min = 0;
+    int min1 = 0;     /*номер элемента минимального значения в левом массиве */
+    int min2 = 0;     /*номер элемента минимального значения в правом массиве*/
+    int min = 0;      /*номер элемента основного вектора*/
 
-    while ((min1 < vec1.size()) && (min2 < vec2.size())) 
-    {
+    while ((min1 < vec1.size()) && (min2 < vec2.size())) /*сравниваем позиции элементов и кладем их в основной массив     */
+    {                                                    /*пока элементы хотя бы из одного масссива не перейдут в основной*/
         if (vec1[min1] < vec2[min2])
         {
             vec[min] = vec1[min1];
@@ -72,7 +53,7 @@ void merge (std::vector<int>& vec, std::vector<int>& vec1, std::vector<int>& vec
         min++;
     }
 
-    while (min1 < vec1.size())
+    while (min1 < vec1.size())   /*кладем оставшиеся элементы из кусочных массивов в основной*/
     {
         vec[min] = vec1[min1];
         min1++;
@@ -91,19 +72,20 @@ void merge_sort(std::vector<int>& a)
 {
     if (a.size() < 2)
         return;
+
     int middle = a.size() / 2;
     std::vector<int> left(middle);
     std::vector<int> right(a.size() - middle);
 
-    for (int i = 0; i < middle; i++)
+    for (int i = 0; i < middle; i++) 
         left[i] = a[i];
 
     for (int i = middle; i < a.size(); i++)
         right[i - middle] = a[i];
 
-    merge_sort(left);
-    merge_sort(right);
-    merge(a, left, right);
+    merge_sort(left);       /*рекурсивно делим левую часть массива, пока его размер не будет равен 1 */
+    merge_sort(right);      /*рекурсивно делим правую часть массива, пока его размер не будет равен 1*/
+    merge(a, left, right);  /*соединяем отсортированные части массива */
 }
 
 int main()
@@ -129,7 +111,7 @@ int main()
     std::cout << std::endl << "Bubble sort: ";
     bubble_sort(array);
     print_vec(array);
-
+   
     std::cout << std::endl << "Insertion sort: ";
     insertion_sort(array);
     print_vec(array);
